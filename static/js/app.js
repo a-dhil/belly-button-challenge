@@ -18,26 +18,102 @@ let labelBubble = sample.otu_ids;
 console.log(`This is otu_ids used for bubble chart ${labelBubble}`);
  
 // Bar graph trace
-let trace1=[{
-        y: labels,
-        x: values,
-        type: 'bar',
-        orientation:'h'
-        }];
+//let trace1=[{
+//        y: labels,
+//        x: values,
+//        type: 'bar',
+//        orientation:'h'
+//        }];
          
     // Bubble grapg trace
-    let trace2={
-        x: labelBubble,
-        y: values,
-        mode: 'markers',
-        marker: {
-            size: values,
-            color: labelBubble
-        }
+//    let trace2={
+//        x: labelBubble,
+//       y: values,
+//        mode: 'markers',
+//        marker: {
+//            size: values,
+//            color: labelBubble
+//        }
         
-          };
+//          };
+//        Plotly.newPlot('bar', trace1);
+//        Plotly.newPlot('bubble', [trace2]);
+        
+//    })
+})
+    
+    
+    function init(){
+        let dropdownMenu = d3.select("#selDataset");
+        d3.json(url).then(function(data){
+            console.log(data);
+            let names=data.names;
+            for (let i = 0; i < names.length; i++){
+                dropdownMenu
+                    .append("option")
+                    .text(names[i])
+                    .property("value",names[i])
+            }
+        });
+
+    };
+
+// Function to handle changes in the dropdown selection
+function optionChanged(selectedName) {
+    // Fetch data based on the selectedName
+    d3.json(url).then(function (data) {
+        // Find the selected sample
+        let selectedSample = data.samples.find(sample => sample.id === selectedName);
+
+        // Extract sample values and OTU values formatted as 'OTU {otu_id}'
+        let values = selectedSample.sample_values;
+        let labels = selectedSample.otu_ids.map(otu_id => `OTU ${otu_id}`);
+        let labelBubble = selectedSample.otu_ids;
+
+        // Bar graph trace
+        let trace1 = [{
+            y: labels,
+            x: values,
+            type: 'bar',
+            orientation: 'h'
+        }];
+
+        // Bubble graph trace
+        let trace2 = {
+            x: labelBubble,
+            y: values,
+            mode: 'markers',
+            marker: {
+                size: values,
+                color: labelBubble
+            }
+        };
+
+        // Update the 'bar' and 'bubble' plots
         Plotly.newPlot('bar', trace1);
         Plotly.newPlot('bubble', [trace2]);
-        
-    })
 
+        // Display sample metadata
+        displayMetadata(data.metadata.find(metadata => metadata.id === parseInt(selectedName)));
+    });
+}
+
+// Function to display sample metadata in HTML
+function displayMetadata(metadata) {
+    // Assuming you have an HTML element with the id 'sample-metadata' to display the metadata
+    let metadataContainer = d3.select("#sample-metadata");
+
+    // Clear any existing content
+    metadataContainer.html("");
+
+    // Iterate over metadata properties and append them to the container
+    Object.entries(metadata).forEach(([key, value]) => {
+        metadataContainer.append("p").text(`${key}: ${value}`);
+    });
+}
+
+// Initialize the page
+init();
+
+
+        
