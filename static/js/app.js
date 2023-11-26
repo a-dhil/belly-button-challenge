@@ -63,17 +63,32 @@ function optionChanged(selectedName) {
     // Fetch data based on the selectedName
     d3.json(url).then(function (data) {
         // Find the selected sample
-        let selectedSample = data.samples.find(sample => sample.id === selectedName);
+        //let selectedSample = data.samples.find(sample => sample.id === selectedName);
 
         // Extract sample values and OTU values formatted as 'OTU {otu_id}'
-        let values = selectedSample.sample_values;
-        let labels = selectedSample.otu_ids.map(otu_id => `OTU ${otu_id}`);
+        //let values = selectedSample.sample_values;
+        //let labels = selectedSample.otu_ids.map(otu_id => `OTU ${otu_id}`);
+        // Find the selected sample
+        let selectedSample = data.samples.find(sample => sample.id === selectedName);
+
+        // Sort sample values in descending order
+        let sortedValues = selectedSample.sample_values.slice().sort((a, b) => b - a);
+
+        // Select the top 10 values
+       
+        let top10Values = sortedValues.slice(0, 10);
+        top10Values.reverse();
+        // Select corresponding OTU IDs for the top 10 values
+        let top10Labels = selectedSample.otu_ids
+            .filter((otu_id, index) => index < 10)
+            .map(otu_id => `OTU ${otu_id}`);
+        top10Labels.reverse();
         let labelBubble = selectedSample.otu_ids;
 
         // Bar graph trace
         let trace1 = [{
-            y: labels,
-            x: values,
+            y: top10Labels,
+            x: top10Values,
             type: 'bar',
             orientation: 'h'
         }];
@@ -81,10 +96,10 @@ function optionChanged(selectedName) {
         // Bubble graph trace
         let trace2 = {
             x: labelBubble,
-            y: values,
+            y: sortedValues,
             mode: 'markers',
             marker: {
-                size: values,
+                size: sortedValues,
                 color: labelBubble
             }
         };
