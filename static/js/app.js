@@ -44,19 +44,22 @@ const url="https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1
     
     
 function init(){
-        let dropdownMenu = d3.select("#selDataset");
-        d3.json(url).then(function(data){
-            console.log(data);
-            let names=data.names;
-            for (let i = 0; i < names.length; i++){
-                dropdownMenu
-                    .append("option")
-                    .text(names[i])
-                    .property("value",names[i])
-            }
-        });
-
-    };
+    let dropdownMenu = d3.select("#selDataset");
+    d3.json(url).then(function(data){
+        console.log(data);
+        let names=data.names;
+        for (let i = 0; i < names.length; i++){
+            dropdownMenu
+                .append("option")
+                .text(names[i])
+                .property("value",names[i])
+        }
+        let firstSample=names[0];
+        console.log(firstSample);
+        optionChanged(firstSample);
+        displayMetadata(data.metadata.find(metadata => metadata.id === parseInt(firstSample)));
+    });
+};
 
 // Function to handle changes in the dropdown selection
 function optionChanged(selectedName) {
