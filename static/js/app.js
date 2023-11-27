@@ -42,7 +42,7 @@ const url="https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1
 //    })
 //})
     
-    
+// Function to initialize the page and populate drop down menu  
 function init(){
     let dropdownMenu = d3.select("#selDataset");
     d3.json(url).then(function(data){
@@ -65,12 +65,7 @@ function init(){
 function optionChanged(selectedName) {
     // Fetch data based on the selectedName
     d3.json(url).then(function (data) {
-        // Find the selected sample
-        //let selectedSample = data.samples.find(sample => sample.id === selectedName);
-
-        // Extract sample values and OTU values formatted as 'OTU {otu_id}'
-        //let values = selectedSample.sample_values;
-        //let labels = selectedSample.otu_ids.map(otu_id => `OTU ${otu_id}`);
+        
         // Find the selected sample
     let selectedSample = data.samples.find(sample => sample.id === selectedName);
 
